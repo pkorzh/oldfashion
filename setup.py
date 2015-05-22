@@ -38,7 +38,7 @@ setup(
     author_email='platon@korzh.io',
 
     description='oldfashion host',
-    long_description=open('README.txt').read(),
+    long_description=open('README.md').read(),
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers'
