@@ -4,9 +4,6 @@ apt-get -y install openssh-server python-setuptools python-dev build-essential g
 sed -i "s/#PasswordAuthentication yes/PasswordAuthentication no/" /etc/ssh/sshd_config
 sed -i "s/UsePAM yes/UsePAM no/" /etc/ssh/sshd_config
 
-cd /paas/oldfashion/
-python setup.py install
-
 adduser --system --disabled-password --gecos "" oldfashion
 
 echo "oldfashion ALL=(ALL) NOPASSWD:/etc/init.d/nginx reload, /usr/sbin/nginx -t" > /etc/sudoers.d/oldfashion-nginx
