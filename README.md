@@ -1,9 +1,9 @@
 #oldfashion
-============
+
+docker powered mini paas
 
 
-
-#Installation
+##Installation
 
  - run `bootstrap.sh`
  - sudo pip install oldfashion
