@@ -7,6 +7,10 @@ docker powered mini paas
 
  - run `bootstrap.sh`
  - sudo pip install oldfashion
+
+##Uploading SSH key
+
+	cat ~/.ssh/id_rsa.pub | ssh <USER>@<OLDFASHION_HOST> "oldfashion acl add <KEY_NAME>"
  
 ##Supported app types
 
