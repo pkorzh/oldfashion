@@ -5,7 +5,7 @@ docker powered mini paas
 
 ##Installation
 
- - run `bootstrap.sh`
+ - run `wget -qO- https://raw.githubusercontent.com/pkorzh/oldfashion/1.0.0/bootstrap.sh | sudo sh`
  - sudo pip install oldfashion
 
 ##Uploading SSH key
