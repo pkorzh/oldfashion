@@ -12,11 +12,6 @@ docker powered mini paas
 
 	cat ~/.ssh/id_rsa.pub | ssh <USER>@<OLDFASHION_HOST> "oldfashion acl add <KEY_NAME>"
  
-##Supported app types
-
- - [django](https://www.djangoproject.com)
- - [nodejs](https://nodejs.org)
- 
 ##Usage
 
     git clone git@github.com:heroku/node-js-sample.git

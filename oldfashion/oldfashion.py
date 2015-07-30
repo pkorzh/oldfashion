@@ -4,7 +4,6 @@ import subprocess
 import tempfile
 import shutil
 
-from docker import Client
 from jinja2 import Template
 
 import utils
@@ -12,8 +11,6 @@ from dokker import Dokker
 
 reload(sys)
 sys.setdefaultencoding('UTF8')
-
-docker_client = Dokker(Client(base_url='unix://var/run/docker.sock'))
 
 class controlled_execution:
 	def __init__(self, msg, rollbackFn=None):
@@ -55,7 +52,7 @@ if __name__ == '__main__':
 
 			f.write(template.render(app=app))
 
-	subprocess.call(['chmod', '+x', os.path.join(repo_path, 'hooks/post-receive')])
+		subprocess.call(['chmod', '+x', os.path.join(repo_path, 'hooks/post-receive')])
 	subprocess.call(['git-receive-pack', repo_path])
 
 def acl(action, name):

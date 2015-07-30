@@ -1,54 +1,64 @@
 import json
 import utils
 
+from docker import Client
+
+
+docker_client = Dokker(Client(base_url='unix://var/run/docker.sock'))
+
+class ContainerList():
+	def __init__(self, containers):
+		self.containers = containers
+
+	def kill(self):
+		for container in self.containers:
+			docker_client.stop(container)
+			docker_client.remove_container(container, force=True)
+
+
+class ImageList():
+	def __init__(self, images):
+		self.images = images
+
+	def kill(self):
+		for images in self.images:
+			docker_client.remove_image(image=image, force=True)
+
+
 class Dokker:
-	def __init__(self, docker_client):
-		self.docker_client = docker_client
+	def __init__(self):
+		pass
 
-	def clean(self, app):
-		self.clean_containers(self.containers(app))
-		self.clean_images(self.images(app))
+	def spawn(self, **kwargs):
+		kwargs['detach'] = True
 
-	def clean_containers(self, containers):
-		for container in containers:
-			id = container.get('Id')
+		container = docker_client.create_container(**kwargs)
 
-			self.docker_client.stop(container=id)
-			self.docker_client.remove_container(container=id, force=True)
+		docker_client.start(container)
 
-	def clean_images(self, images):
-		for image in images:
-			self.docker_client.remove_image(image=image, force=True)
-
-	def build(self, build_path, app):
-		for line in self.docker_client.build(path=build_path, tag=utils.image_name(app), rm=True, forcerm=True):
-			val = ''
-
-			try:
-				d = json.loads(line)
-
-				if 'stream' in d:
-					val = d['stream']
-				elif 'status' in d:
-					val = d['status']
-				else:
-					val = line
-			except:
-				val = line
-
-			yield val
-
-	def run(self, app):
-		container = self.docker_client.create_container(image=utils.image_name(app), detach=True, labels={'im.oldfashion.app': app})
-
-		self.docker_client.start(container)
-
-		info = self.docker_client.inspect_container(container)
+		info = docker_client.inspect_container(container)
 
 		return info['NetworkSettings']['IPAddress']
 
-	def containers(self, app):
-		return self.docker_client.containers(quiet=True, filters={'label': utils.container_label(app)})
+	def containers(self, **kwargs):
+		return ContainerList(docker_client.containers(quiet=True, filters=kwargs))
 
-	def images(self, app):
-		return self.docker_client.images(name=utils.image_name(app), quiet=True)
+	def images(self, **kwargs):
+		name = kwargs.pop('name', None)
+		quiet = kwargs.pop('quiet', True)
+
+		return ImageList(docker_client.images(name=name, quiet=quiet, filters=kwargs))
+
+	def build(self):
+		rm = kwargs.pop('rm', False)
+		forcerm = kwargs.pop('forcerm', True)
+
+		for line in self.docker_client.build(**kwargs, rm=rm, forcerm=forcerm):
+			yield val
+
+	def purge(self, app):
+		self.containers(app=app)
+			.kill()
+
+		self.images(app=app)
+			.kill()
