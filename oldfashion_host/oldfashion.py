@@ -99,7 +99,7 @@ def deploy(app):
 		else:
 			buildpack = buildpack[0]
 
-		with controlled_execution('Building %s app' % app, rollbackFn=lambda: docker_client.images(name=app.name).kill()) as context:
+		with controlled_execution('Building %s app' % app.name, rollbackFn=lambda: docker_client.images(name=app.name).kill()) as context:
 			utils.copytree(buildpack.instance().get_build_context_path(), build_path, {'app': app.name})
 
 			for line in docker_client.build(path=build_path, tag=app.image()):
