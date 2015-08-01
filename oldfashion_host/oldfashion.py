@@ -3,6 +3,7 @@ import os
 import subprocess
 import tempfile
 import shutil
+import json
 
 from jinja2 import Template
 
@@ -80,7 +81,7 @@ def remove(app):
 			subprocess.call(['sudo', '/etc/init.d/nginx', 'reload'], stdout=subprocess.PIPE)
 
 			with controlled_execution('Removing containers and images') as context:
-				docker_client.purge(app.name)
+				docker_client.purge(app)
 
 def deploy(app):
 	build_path = tempfile.mkdtemp()
@@ -102,7 +103,21 @@ def deploy(app):
 			utils.copytree(buildpack.instance().get_build_context_path(), build_path, {'app': app.name})
 
 			for line in docker_client.build(path=build_path, tag=app.image()):
-				context.log(line)
+				val = ''
+
+				try:
+					d = json.loads(line)
+
+					if 'stream' in d:
+						val = d['stream']
+					elif 'status' in d:
+						val = d['status']
+					else:
+						val = line
+				except:
+					val = line
+
+				context.log(val)
 			
 			with controlled_execution('Running', rollbackFn=lambda: docker_client.containers(name=app.name).kill()) as context:
 				old_containers = docker_client.containers(app=app.name)

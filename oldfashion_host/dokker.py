@@ -21,7 +21,7 @@ class ImageList():
 		self.images = images
 
 	def kill(self):
-		for images in self.images:
+		for image in self.images:
 			docker_client.remove_image(image, force=True)
 
 
@@ -62,6 +62,6 @@ class Dokker:
 			yield line
 
 	def purge(self, app):
-		self.containers(name=app).kill()
+		self.containers(name=app.name).kill()
 
-		self.images(name=app).kill()
+		self.images(name=app.image()).kill()
