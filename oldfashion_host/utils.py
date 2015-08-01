@@ -10,14 +10,22 @@ sys.setdefaultencoding('UTF8')
 from jinja2 import Template
 
 class Bunch:
-    def __init__(self, **kwds):
-        self.__dict__.update(kwds)
+	def __init__(self, **kwds):
+		self.__dict__.update(kwds)
+		self.__cache = None
+
+	def instance(self, *args):
+		return self.load()(*args)
+
+
+def plugins(type):
+	return [Bunch(**dict(name=v.name, load=v.load)) for v in pkg_resources.iter_entry_points(group='oldfashion.{}'.format(type), name=None)]
 
 def buildpacks():
-	return [Bunch(**dict(name=v.name)) for v in pkg_resources.iter_entry_points(group='oldfashion.buildpack', name=None)]
+	return plugins('buildpack')
 
 def applets():
-	return [Bunch(**dict(name=v.name)) for v in pkg_resources.iter_entry_points(group='oldfashion.applet', name=None)]
+	return plugins('applet')
 
 def copytree(src, dst, context={}, symlinks = False, ignore = None):
 	if ignore is None:

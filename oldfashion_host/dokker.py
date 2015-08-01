@@ -4,7 +4,7 @@ import utils
 from docker import Client
 
 
-docker_client = Dokker(Client(base_url='unix://var/run/docker.sock'))
+docker_client = Client(base_url='unix://var/run/docker.sock')
 
 class ContainerList():
 	def __init__(self, containers):
@@ -22,15 +22,18 @@ class ImageList():
 
 	def kill(self):
 		for images in self.images:
-			docker_client.remove_image(image=image, force=True)
+			docker_client.remove_image(image, force=True)
 
 
 class Dokker:
 	def __init__(self):
 		pass
 
-	def spawn(self, **kwargs):
-		kwargs['detach'] = True
+	def spawn(self, image, **kwargs):
+		kwargs.update({
+			'detach': True,
+			'image': image
+		})
 
 		container = docker_client.create_container(**kwargs)
 
@@ -49,16 +52,16 @@ class Dokker:
 
 		return ImageList(docker_client.images(name=name, quiet=quiet, filters=kwargs))
 
-	def build(self):
-		rm = kwargs.pop('rm', False)
-		forcerm = kwargs.pop('forcerm', True)
+	def build(self, **kwargs):
+		kwargs.update({
+			'rm': True,
+			'forcerm': True
+		})
 
-		for line in self.docker_client.build(**kwargs, rm=rm, forcerm=forcerm):
-			yield val
+		for line in docker_client.build(**kwargs):
+			yield line
 
 	def purge(self, app):
-		self.containers(app=app)
-			.kill()
+		self.containers(name=app).kill()
 
-		self.images(app=app)
-			.kill()
+		self.images(name=app).kill()

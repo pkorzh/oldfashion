@@ -26,12 +26,12 @@ def requireModules(moduleNames=None):
     return moduleNames
 
 scripts = [
-    'oldfashion=oldfashion.command_line:main'
+    'oldfashion=oldfashion_host.command_line:main'
 ]
 
 setup(
     name='oldfashion',
-    packages=["oldfashion"],
+    packages=['oldfashion_host'],
     version='1.0.0',
 
     author='Platon Korzh',

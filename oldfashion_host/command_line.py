@@ -6,6 +6,13 @@ import subprocess
 import oldfashion, utils
 from argparse_actions import StoreGitDirectoryAction
 
+from dokker import Dokker
+docker_client = Dokker()
+
+
+def handle_applet(applet, action, name):
+	methodToCall = getattr(applet.instance(docker_client), action)
+	methodToCall(name)
 
 def main():
 	parser = argparse.ArgumentParser(prog='oldfashion')
@@ -17,7 +24,7 @@ def main():
 
 	subparser = subparsers.add_parser('git-upload-pack')
 	subparser.add_argument('app', action=StoreGitDirectoryAction)
-	subparser.set_defaults(handle=lambda args: subprocess.call(['git-upload-pack', utils.repo_path(args.app)]))
+	subparser.set_defaults(handle=lambda args: subprocess.call(['git-upload-pack', app.repo()]))
 
 	subparser = subparsers.add_parser('deploy')
 	subparser.add_argument('app', action=StoreGitDirectoryAction)
@@ -36,7 +43,7 @@ def main():
 		subparser = subparsers.add_parser(applet.name)
 		subparser.add_argument('action', choices=['spawn', 'kill'])
 		subparser.add_argument('name')
-		#subparser.set_defaults(handle=lambda args: oldfashion.acl(args.action, args.name))
+		subparser.set_defaults(handle=lambda args: handle_applet(applet, args.action, args.name))
 
 	args = parser.parse_args()
 	args.handle(args)

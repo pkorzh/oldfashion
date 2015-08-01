@@ -4,13 +4,13 @@ class AppUtil():
 	def __init__(self, name):
 		self.name = name
 
-	def label(self, prefix='app'):
-		return 'im.oldfashion.{}={}'.format(prefix, self.name)
+	def label(self):
+		return 'im.oldfashion.app={}'.format(self.name)
 
 	def repo(self):
 		return '/home/oldfashion/{}'.format(self.name)
 
-	def image(self, app):
+	def image(self):
 		return 'oldfashion/{}'.format(self.name)
 
 	def nginx_config(self):
