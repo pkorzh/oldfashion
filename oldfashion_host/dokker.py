@@ -10,6 +10,9 @@ class ContainerList():
 	def __init__(self, containers):
 		self.containers = containers
 
+	def any(self):
+		return len(self.containers) > 0
+
 	def kill(self):
 		for container in self.containers:
 			docker_client.stop(container)
@@ -20,6 +23,9 @@ class ImageList():
 	def __init__(self, images):
 		self.images = images
 
+	def any(self):
+		return len(self.images) > 0
+
 	def kill(self):
 		for image in self.images:
 			docker_client.remove_image(image, force=True)
@@ -28,6 +34,9 @@ class ImageList():
 class Dokker:
 	def __init__(self):
 		pass
+
+	def pull(self, image):
+		docker_client.pull(image, stream=False)
 
 	def spawn(self, image, **kwargs):
 		kwargs.update({

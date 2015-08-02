@@ -119,8 +119,8 @@ def deploy(app):
 
 				context.log(val)
 			
-			with controlled_execution('Running', rollbackFn=lambda: docker_client.containers(name=app.name).kill()) as context:
-				old_containers = docker_client.containers(app=app.name)
+			with controlled_execution('Running', rollbackFn=lambda: docker_client.containers(label=app.label()).kill()) as context:
+				old_containers = docker_client.containers(label=app.label())
 
 				container_ip = docker_client.spawn(app.image(), name=app.name, volumes_from=None, labels=[app.label()])
 

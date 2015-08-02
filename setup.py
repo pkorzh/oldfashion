@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 try:
     from setuptools import setup
+    from setuptools.command.install import install
 except ImportError:
     from distutils.core import setup
+    from distutils.command.install import install
 
 # Allow trove classifiers in previous python versions
 from sys import version
@@ -10,6 +12,12 @@ if version < '2.2.3':
     from distutils.dist import DistributionMetadata
     DistributionMetadata.classifiers = None
     DistributionMetadata.download_url = None
+
+
+class CustomInstallCommand(install):
+    def run(self):
+        install.run(self)
+
 
 def requireModules(moduleNames=None):
     import re
@@ -30,6 +38,10 @@ scripts = [
 ]
 
 setup(
+    cmdclass={
+        'install': CustomInstallCommand,
+    },
+
     name='oldfashion',
     packages=['oldfashion_host'],
     version='1.0.0',
