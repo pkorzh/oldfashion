@@ -5,7 +5,7 @@ class AppUtil():
 		self.name = name
 
 	def label(self):
-		return 'im.oldfashion.app={}'.format(self.name)
+		return 'im.oldfashion.app.{}'.format(self.name)
 
 	def repo(self):
 		return '/home/oldfashion/{}'.format(self.name)
