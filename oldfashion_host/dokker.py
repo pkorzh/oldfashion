@@ -36,7 +36,8 @@ class Dokker:
 		pass
 
 	def pull(self, image):
-		docker_client.pull(image, stream=False)
+		for line in docker_client.pull(image, stream=True):
+			yield line
 
 	def spawn(self, image, **kwargs):
 		kwargs.update({
